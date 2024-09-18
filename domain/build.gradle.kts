@@ -34,13 +34,9 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-
-    implementation(libs.hilt.android)
-    kapt(libs.hilt.android.compiler)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation (libs.javax.inject)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

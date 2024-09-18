@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.0"
     id("kotlin-kapt")
 }
 
@@ -36,9 +37,8 @@ android {
 dependencies {
     implementation(project(":domain"))
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
 
+    //Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
 
