@@ -19,22 +19,32 @@ class HomeViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
-        getProducts()
+        getAllProducts()
     }
 
-    fun getProducts() {
+    private fun getAllProducts() {
         viewModelScope.launch {
             _uiState.value = HomeScreenUIState.Loading
-            val result = getProductUseCase()
-            if (result.isSuccess) {
-                _uiState.value = HomeScreenUIState.Success(result.getOrNull() ?: emptyList())
+            val feature = getProducts("electronics")
+            val popular = getProducts("jewelery")
+            if (feature.isEmpty() || popular.isEmpty()) {
+                _uiState.value = HomeScreenUIState.Error("Fail to load products")
+                return@launch
+            }
+            _uiState.value = HomeScreenUIState.Success(feature, popular)
+        }
+    }
+
+    private suspend fun getProducts(category: String?) : List<Product> {
+        val result = getProductUseCase(category)
+        if (result.isSuccess) {
+            return result.getOrNull() ?: emptyList()
+        } else {
+            val exception = result.exceptionOrNull()
+            if (exception is BusinessException) {
+                return emptyList()
             } else {
-                val exception = result.exceptionOrNull()
-                if (exception is BusinessException) {
-                    _uiState.value = HomeScreenUIState.Error(exception.message ?: "Unknown error")
-                } else {
-                    _uiState.value = HomeScreenUIState.Error("Unknown error")
-                }
+                return emptyList()
             }
         }
     }
@@ -42,6 +52,6 @@ class HomeViewModel @Inject constructor(
 
 sealed interface HomeScreenUIState {
     data object Loading : HomeScreenUIState
-    data class Success(val data: List<Product>) : HomeScreenUIState
+    data class Success(val feature: List<Product>, val popular: List<Product>) : HomeScreenUIState
     data class Error(val message: String) : HomeScreenUIState
 }

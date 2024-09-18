@@ -12,11 +12,18 @@ import javax.inject.Inject
 class ProductRepositoryImpl @Inject constructor(
     private val service: NetworkService
 ) : ProductRepository {
-    override suspend fun getProducts(): List<Product> {
+    override suspend fun getProducts(category: String?): List<Product> {
         try {
-            return service.getProducts().map {
-                it.toProduct()
+            if (category.isNullOrBlank()) {
+                return service.getProducts().map {
+                    it.toProduct()
+                }
+            } else {
+                return service.getProductsByCategory(category).map {
+                    it.toProduct()
+                }
             }
+
         } catch (e: IOException) {
             throw BusinessException.IOException("IOException: ${e.message}")
         } catch (e: HttpException) {

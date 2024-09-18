@@ -8,9 +8,9 @@ import javax.inject.Inject
 class GetProductUseCase @Inject constructor(
     private val repository: ProductRepository
 ) {
-    suspend operator fun invoke() : Result<List<Product>> {
+    suspend operator fun invoke(category: String?) : Result<List<Product>> {
         return try {
-            val listProduct = repository.getProducts()
+            val listProduct = repository.getProducts(category)
             Result.success(listProduct)
         } catch (e: BusinessException) {
             Result.failure(e)
