@@ -3,6 +3,7 @@ package com.taild.data.repository
 import com.taild.data.network.NetworkService
 import com.taild.domain.exception.BusinessException
 import com.taild.domain.model.Product
+import com.taild.domain.repository.CategoryRepository
 import com.taild.domain.repository.ProductRepository
 import retrofit2.HttpException
 import java.io.IOException
@@ -27,7 +28,21 @@ class ProductRepositoryImpl @Inject constructor(
         } catch (e: IOException) {
             throw BusinessException.IOException("IOException: ${e.message}")
         } catch (e: HttpException) {
-            throw BusinessException.NetworkException("NetworkException: ${e.message}")
+            throw BusinessException.HttpException("NetworkException: ${e.message}")
+        }
+    }
+}
+
+class CategoryRepositoryImpl @Inject constructor(
+    private val networkService: NetworkService
+) : CategoryRepository {
+    override suspend fun getCategories(): List<String> {
+        try {
+            return networkService.getCategories()
+        } catch (e: IOException) {
+            throw BusinessException.IOException("IOException: ${e.message}")
+        } catch (e: HttpException) {
+            throw BusinessException.HttpException("NetworkException: ${e.message}")
         }
     }
 }

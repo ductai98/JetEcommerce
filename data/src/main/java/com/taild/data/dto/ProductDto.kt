@@ -1,10 +1,10 @@
-package com.taild.data.entity
+package com.taild.data.dto
 
 import com.taild.domain.model.Product
 import kotlinx.serialization.Serializable
 
 @Serializable
-class ProductEntity(
+class ProductDto(
     val id: Long,
     val title: String,
     val price: Double,

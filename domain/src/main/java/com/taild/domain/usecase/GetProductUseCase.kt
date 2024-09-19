@@ -6,11 +6,11 @@ import com.taild.domain.repository.ProductRepository
 import javax.inject.Inject
 
 class GetProductUseCase @Inject constructor(
-    private val repository: ProductRepository
+    private val productRepository: ProductRepository
 ) {
     suspend operator fun invoke(category: String?) : Result<List<Product>> {
         return try {
-            val listProduct = repository.getProducts(category)
+            val listProduct = productRepository.getProducts(category)
             Result.success(listProduct)
         } catch (e: BusinessException) {
             Result.failure(e)
