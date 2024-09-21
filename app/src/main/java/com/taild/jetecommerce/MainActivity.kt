@@ -4,6 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -23,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -46,7 +50,11 @@ class MainActivity : ComponentActivity() {
                         BottomNavigationBar(
                             currentRoute = currentRoute ?: "home",
                             navigateToItem = {
-                                navController.navigate(it)
+                                navController.navigate(it) {
+                                    popUpTo("home") { saveState = true }
+                                    launchSingleTop = true // Ensures only one instance of home is created
+                                    restoreState = true
+                                }
                             }
                         )
                     }
@@ -60,13 +68,37 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             startDestination = "home"
                         ) {
-                            composable(route = "home") {
+                            composable(
+                                route = "home",
+                                enterTransition = {
+                                    fadeIn(animationSpec = tween(durationMillis = 150))
+                                },
+                                exitTransition = {
+                                    fadeOut(animationSpec = tween(durationMillis = 150))
+                                }
+                            ) {
                                 HomeScreen(navController)
                             }
-                            composable(route = "cart") {
+                            composable(
+                                route = "cart",
+                                enterTransition = {
+                                    fadeIn(animationSpec = tween(durationMillis = 150))
+                                },
+                                exitTransition = {
+                                    fadeOut(animationSpec = tween(durationMillis = 150))
+                                }
+                            ) {
                                 Text(text = "Cart")
                             }
-                            composable(route = "profile") {
+                            composable(
+                                route = "profile",
+                                enterTransition = {
+                                    fadeIn(animationSpec = tween(durationMillis = 150))
+                                },
+                                exitTransition = {
+                                    fadeOut(animationSpec = tween(durationMillis = 150))
+                                }
+                            ) {
                                 Text(text = "Profile")
                             }
                         }

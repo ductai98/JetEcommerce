@@ -1,5 +1,8 @@
 package com.taild.jetecommerce.ui.feature.home
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,9 +37,11 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -140,7 +145,7 @@ fun ProfileHeader() {
 
 @Composable
 fun CircularIcon(
-    modifier: Modifier = Modifier.size(38.dp),
+    modifier: Modifier = Modifier,
     imageVector: ImageVector) {
     Box(
         contentAlignment = Alignment.Center,
@@ -243,17 +248,26 @@ fun HomeContent(
             if (categories.isNotEmpty()) {
                 Spacer(modifier = Modifier.size(16.dp))
                 LazyRow {
-                    items(categories) { category ->
-                        Text(
-                            text = category.replaceFirstChar { it.uppercase() },
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier
-                                .padding(horizontal = 8.dp)
-                                .clip(shape = RoundedCornerShape(8.dp))
-                                .background(MaterialTheme.colorScheme.primary)
-                                .padding(8.dp),
-                        )
+                    items(categories, key = {it}) { category ->
+                        var isVisible by remember { mutableStateOf(false) }
+                        LaunchedEffect(true) {
+                            isVisible = true
+                        }
+                        AnimatedVisibility(
+                            visible = isVisible,
+                            enter = fadeIn() + expandVertically()
+                        ) {
+                            Text(
+                                text = category.replaceFirstChar { it.uppercase() },
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier
+                                    .padding(horizontal = 8.dp)
+                                    .clip(shape = RoundedCornerShape(8.dp))
+                                    .background(MaterialTheme.colorScheme.primary)
+                                    .padding(8.dp),
+                            )
+                        }
                     }
                 }
                 Spacer(modifier = Modifier.size(12.dp))
@@ -289,8 +303,17 @@ fun HomeProductRow(products: List<Product>, title: String) {
         }
         Spacer(modifier = Modifier.size(8.dp))
         LazyRow {
-            items(products) { product ->
-                ProductItem(product = product)
+            items(items = products, key = { it.id }) { product ->
+                var isVisible by remember { mutableStateOf(false) }
+                LaunchedEffect(true) {
+                    isVisible = true
+                }
+                AnimatedVisibility(
+                    visible = isVisible,
+                    enter = fadeIn() + expandVertically()
+                ) {
+                    ProductItem(product = product)
+                }
             }
         }
     }
