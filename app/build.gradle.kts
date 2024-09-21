@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.0"
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android") version "2.51.1"
 }
@@ -68,7 +69,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.navigation.compose)
     implementation(libs.androidx.fragment)
-    implementation("androidx.compose.material:material-icons-extended:1.5.0")
+    implementation(libs.androidx.material.icons.extended)
 
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
@@ -76,6 +77,9 @@ dependencies {
 
     //coil
     implementation(libs.coil.compose)
+
+    implementation(libs.kotlinx.serialization.core)
+    implementation(libs.kotlinx.serialization.json)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

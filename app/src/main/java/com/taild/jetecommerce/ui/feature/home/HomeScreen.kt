@@ -247,16 +247,16 @@ fun HomeContent(
 
             if (categories.isNotEmpty()) {
                 Spacer(modifier = Modifier.size(16.dp))
-                LazyRow {
-                    items(categories, key = {it}) { category ->
-                        var isVisible by remember { mutableStateOf(false) }
-                        LaunchedEffect(true) {
-                            isVisible = true
-                        }
-                        AnimatedVisibility(
-                            visible = isVisible,
-                            enter = fadeIn() + expandVertically()
-                        ) {
+                var isVisible by remember { mutableStateOf(false) }
+                LaunchedEffect(true) {
+                    isVisible = true
+                }
+                AnimatedVisibility(
+                    visible = isVisible,
+                    enter = fadeIn() + expandVertically()
+                ) {
+                    LazyRow {
+                        items(categories, key = {it}) { category ->
                             Text(
                                 text = category.replaceFirstChar { it.uppercase() },
                                 style = MaterialTheme.typography.bodyMedium,
@@ -265,8 +265,7 @@ fun HomeContent(
                                     .padding(horizontal = 8.dp)
                                     .clip(shape = RoundedCornerShape(8.dp))
                                     .background(MaterialTheme.colorScheme.primary)
-                                    .padding(8.dp),
-                            )
+                                    .padding(8.dp),)
                         }
                     }
                 }
@@ -302,16 +301,16 @@ fun HomeProductRow(products: List<Product>, title: String) {
                 color = MaterialTheme.colorScheme.primary)
         }
         Spacer(modifier = Modifier.size(8.dp))
-        LazyRow {
-            items(items = products, key = { it.id }) { product ->
-                var isVisible by remember { mutableStateOf(false) }
-                LaunchedEffect(true) {
-                    isVisible = true
-                }
-                AnimatedVisibility(
-                    visible = isVisible,
-                    enter = fadeIn() + expandVertically()
-                ) {
+        var isVisible by remember { mutableStateOf(false) }
+        LaunchedEffect(true) {
+            isVisible = true
+        }
+        AnimatedVisibility(
+            visible = isVisible,
+            enter = fadeIn() + expandVertically()
+        ) {
+            LazyRow {
+                items(items = products, key = { it.id }) { product ->
                     ProductItem(product = product)
                 }
             }
@@ -331,7 +330,7 @@ fun ProductItem(product: Product) {
             ),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.LightGray.copy(alpha = 3.0f))
+            containerColor = Color.LightGray.copy(alpha = 0.3f))
         ) {
         Column(
             modifier = Modifier.fillMaxSize()
