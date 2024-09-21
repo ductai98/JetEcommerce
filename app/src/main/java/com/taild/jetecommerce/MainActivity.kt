@@ -31,6 +31,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.taild.jetecommerce.navigation.AppRoute
 import com.taild.jetecommerce.ui.feature.home.HomeScreen
 import com.taild.jetecommerce.ui.theme.JetEcommerceTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,10 +49,10 @@ class MainActivity : ComponentActivity() {
                     bottomBar = {
                         val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
                         BottomNavigationBar(
-                            currentRoute = currentRoute ?: "home",
+                            currentRoute = currentRoute ?: AppRoute.Home.name,
                             navigateToItem = {
-                                navController.navigate(it) {
-                                    popUpTo("home") { saveState = true }
+                                navController.navigate(it.name) {
+                                    popUpTo(AppRoute.Home.name) { saveState = true }
                                     launchSingleTop = true // Ensures only one instance of home is created
                                     restoreState = true
                                 }
@@ -66,10 +67,10 @@ class MainActivity : ComponentActivity() {
                     ) {
                         NavHost(
                             navController = navController,
-                            startDestination = "home"
+                            startDestination = AppRoute.Home.name
                         ) {
                             composable(
-                                route = "home",
+                                route = AppRoute.Home.name,
                                 enterTransition = {
                                     fadeIn(animationSpec = tween(durationMillis = 150))
                                 },
@@ -80,7 +81,7 @@ class MainActivity : ComponentActivity() {
                                 HomeScreen(navController)
                             }
                             composable(
-                                route = "cart",
+                                route = AppRoute.Cart.name,
                                 enterTransition = {
                                     fadeIn(animationSpec = tween(durationMillis = 150))
                                 },
@@ -91,7 +92,7 @@ class MainActivity : ComponentActivity() {
                                 Text(text = "Cart")
                             }
                             composable(
-                                route = "profile",
+                                route = AppRoute.Profile.name,
                                 enterTransition = {
                                     fadeIn(animationSpec = tween(durationMillis = 150))
                                 },
@@ -112,7 +113,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun BottomNavigationBar(
     currentRoute: String,
-    navigateToItem: (String) -> Unit
+    navigateToItem: (AppRoute) -> Unit
 ) {
     NavigationBar {
         val items = listOf(
@@ -123,7 +124,7 @@ fun BottomNavigationBar(
 
         items.forEach { item ->
             NavigationBarItem(
-                selected = currentRoute == item.route,
+                selected = currentRoute == item.route.name,
                 onClick = {navigateToItem(item.route)},
                 icon = {
                     Icon(
@@ -145,11 +146,11 @@ fun BottomNavigationBar(
 }
 
 sealed class BottomNavItems(
-    val route: String,
+    val route: AppRoute,
     val title: String,
     val icon: ImageVector
 ) {
-    object Home : BottomNavItems("home", "Home", icon = Icons.Filled.Home)
-    object Cart : BottomNavItems("cart", "Cart", icon = Icons.Filled.ShoppingCart)
-    object Profile : BottomNavItems("profile", "Profile", icon = Icons.Filled.Person)
+    object Home : BottomNavItems(route = AppRoute.Home, "Home", icon = Icons.Filled.Home)
+    object Cart : BottomNavItems(route = AppRoute.Cart, "Cart", icon = Icons.Filled.ShoppingCart)
+    object Profile : BottomNavItems(route = AppRoute.Profile, "Profile", icon = Icons.Filled.Person)
 }
