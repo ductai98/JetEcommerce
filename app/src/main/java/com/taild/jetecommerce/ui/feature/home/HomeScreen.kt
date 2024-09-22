@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -63,7 +64,7 @@ import com.taild.domain.model.Product
 
 @Composable
 fun HomeScreen(
-    navController: NavController? = null,
+    onClickProductItem: (Product) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -104,7 +105,8 @@ fun HomeScreen(
                 populars = populars,
                 categories = categories,
                 isLoading = loading,
-                errorMessage = error)
+                errorMessage = error,
+                onClick = onClickProductItem)
         }
     }
 }
@@ -205,7 +207,8 @@ fun HomeContent(
     populars: List<Product>,
     categories: List<String>,
     isLoading: Boolean = false,
-    errorMessage: String? = null
+    errorMessage: String? = null,
+    onClick: (Product) -> Unit
     ) {
     var text by rememberSaveable { mutableStateOf("") }
     LazyColumn {
@@ -272,18 +275,21 @@ fun HomeContent(
                 Spacer(modifier = Modifier.size(12.dp))
             }
             if (features.isNotEmpty()) {
-                HomeProductRow(features, "Feature")
+                HomeProductRow(features, "Feature", onClick)
                 Spacer(modifier = Modifier.size(16.dp))
             }
             if (populars.isNotEmpty()) {
-                HomeProductRow(populars, "Popular")
+                HomeProductRow(populars, "Popular", onClick)
             }
         }
     }
 }
 
 @Composable
-fun HomeProductRow(products: List<Product>, title: String) {
+fun HomeProductRow(
+    products: List<Product>,
+    title: String,
+    onClick: (Product) -> Unit) {
     Column {
         Box(modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -311,7 +317,7 @@ fun HomeProductRow(products: List<Product>, title: String) {
         ) {
             LazyRow {
                 items(items = products, key = { it.id }) { product ->
-                    ProductItem(product = product)
+                    ProductItem(product = product, onClick)
                 }
             }
         }
@@ -320,14 +326,18 @@ fun HomeProductRow(products: List<Product>, title: String) {
 }
 
 @Composable
-fun ProductItem(product: Product) {
+fun ProductItem(
+    product: Product,
+    onClick: (Product) -> Unit
+    ) {
     Card(
         modifier = Modifier
             .padding(horizontal = 8.dp)
             .size(
                 width = 126.dp,
                 height = 144.dp
-            ),
+            )
+            .clickable { onClick(product) },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.LightGray.copy(alpha = 0.3f))

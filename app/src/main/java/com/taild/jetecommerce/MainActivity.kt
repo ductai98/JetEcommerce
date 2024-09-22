@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -32,12 +33,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import com.taild.domain.model.Product
+import com.taild.jetecommerce.model.UiProduct
 import com.taild.jetecommerce.navigation.CartRoute
+import com.taild.jetecommerce.navigation.DetailsRoute
 import com.taild.jetecommerce.navigation.HomeRoute
 import com.taild.jetecommerce.navigation.ProfileRoute
+import com.taild.jetecommerce.navigation.productNavType
 import com.taild.jetecommerce.ui.feature.home.HomeScreen
 import com.taild.jetecommerce.ui.theme.JetEcommerceTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.reflect.typeOf
 
 const val TAG = "MainActivity"
 
@@ -64,11 +71,11 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
-                ) {
+                ) {insetPadding ->
                     Surface(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(it)
+                            .padding(insetPadding)
                     ) {
                         NavHost(
                             navController = navController,
@@ -82,8 +89,14 @@ class MainActivity : ComponentActivity() {
                                     fadeOut(animationSpec = tween(durationMillis = 150))
                                 }
                             ) {
-                                HomeScreen(navController)
+                                HomeScreen(
+                                    onClickProductItem = { productItem ->
+                                        val product = UiProduct.fromProduct(product = productItem)
+                                        navController.navigate(DetailsRoute(product))
+                                    }
+                                )
                             }
+
                             composable<CartRoute>(
                                 enterTransition = {
                                     fadeIn(animationSpec = tween(durationMillis = 150))
@@ -94,6 +107,7 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 Text(text = "Cart")
                             }
+
                             composable<ProfileRoute>(
                                 enterTransition = {
                                     fadeIn(animationSpec = tween(durationMillis = 150))
@@ -103,6 +117,15 @@ class MainActivity : ComponentActivity() {
                                 }
                             ) {
                                 Text(text = "Profile")
+                            }
+
+                            composable<DetailsRoute> (
+                                typeMap = mapOf(typeOf<UiProduct>() to productNavType)
+                            ) {
+                                val route = it.toRoute<DetailsRoute>()
+                                Box(modifier = Modifier.fillMaxSize()) {
+                                    Text(text = route.product.title)
+                                }
                             }
                         }
                     }
